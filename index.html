@@ -23,32 +23,34 @@
   <div class="container">
     <h1 class="mt-3 mb-4">🎯 Ušetřeno za zlozvyky</h1>
 
-    <div class="mb-3">
-      <label class="form-label">Co si chceš koupit?</label>
-      <input type="text" class="form-control" id="goalItem" placeholder="Např. Sluchátka">
-    </div>
+    <div id="formSection">
+      <div class="mb-3">
+        <label class="form-label">Co si chceš koupit?</label>
+        <input type="text" class="form-control" id="goalItem" placeholder="Např. Sluchátka">
+      </div>
 
-    <div class="mb-3">
-      <label class="form-label">Cena cíle (Kč)</label>
-      <input type="number" class="form-control" id="goalAmount" placeholder="Např. 2500">
-    </div>
+      <div class="mb-3">
+        <label class="form-label">Cena cíle (Kč)</label>
+        <input type="number" class="form-control" id="goalAmount" placeholder="Např. 2500">
+      </div>
 
-    <div class="mb-3">
-      <label class="form-label">Zlozvyk (např. kafe)</label>
-      <input type="text" class="form-control" id="unitName" placeholder="Např. kafe">
-    </div>
+      <div class="mb-3">
+        <label class="form-label">Zlozvyk (např. kafe)</label>
+        <input type="text" class="form-control" id="unitName" placeholder="Např. kafe">
+      </div>
 
-    <div class="mb-3">
-      <label class="form-label">Cena jednoho zlozvyku (Kč)</label>
-      <input type="number" class="form-control" id="unitValue" placeholder="Např. 50">
-    </div>
+      <div class="mb-3">
+        <label class="form-label">Cena jednoho zlozvyku (Kč)</label>
+        <input type="number" class="form-control" id="unitValue" placeholder="Např. 50">
+      </div>
 
-    <div class="mb-3">
-      <label class="form-label">URL obrázku (nepovinné)</label>
-      <input type="url" class="form-control" id="imageUrl" placeholder="https://...">
-    </div>
+      <div class="mb-3">
+        <label class="form-label">URL obrázku (nepovinné)</label>
+        <input type="url" class="form-control" id="imageUrl" placeholder="https://...">
+      </div>
 
-    <button class="btn btn-primary mb-4" onclick="startTracker()">Začít sledovat</button>
+      <button class="btn btn-primary mb-4" onclick="startTracker()">Začít sledovat</button>
+    </div>
 
     <div id="tracker" style="display:none;">
       <img id="previewImage" src="" alt="Předmět">
@@ -63,6 +65,7 @@
       <p class="lead">🧾 Počet nevyužitých <span id="unitLabel"></span>: <strong><span id="count">0</span></strong></p>
 
       <button class="btn btn-success mb-3" onclick="increment()">+1 nevyužité <span id="unitLabelBtn"></span></button>
+      <button class="btn btn-outline-danger mb-3" onclick="resetTracker()">🔁 Reset</button>
       <p id="message" class="fw-bold text-success"></p>
     </div>
   </div>
@@ -88,6 +91,7 @@
 
       updateUI();
       saveToLocal();
+      document.getElementById("formSection").style.display = "none";
     }
 
     function increment() {
@@ -133,6 +137,11 @@
       localStorage.setItem("savingsTracker", JSON.stringify(data));
     }
 
+    function resetTracker() {
+      localStorage.removeItem("savingsTracker");
+      location.reload();
+    }
+
     function loadFromLocal() {
       const data = JSON.parse(localStorage.getItem("savingsTracker"));
       if (data) {
@@ -144,6 +153,7 @@
         count = data.count;
         imageUrl = data.imageUrl;
         updateUI();
+        document.getElementById("formSection").style.display = "none";
       }
     }
 
