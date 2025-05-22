@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Ušetřeno za zlozvyky</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input, button { margin: 5px 0; padding: 8px; width: 100%; }
+    #tracker { margin-top: 20px; }
+    .stat { font-size: 1.2em; margin: 10px 0; }
+  </style>
+</head>
+<body>
+
+  <h2>💡 Chci si koupit...</h2>
+  <input type="text" id="goalItem" placeholder="Např. Sluchátka">
+  <input type="number" id="goalAmount" placeholder="Cena v Kč (např. 2500)">
+  <input type="text" id="unitName" placeholder="Zlozvyk (např. kafe)">
+  <input type="number" id="unitValue" placeholder="Cena zlozvyku (např. 50)">
+  <button onclick="startTracker()">Začít sledovat</button>
+
+  <div id="tracker" style="display:none;">
+    <h3>🎯 Cíl: <span id="goalText"></span></h3>
+    <p class="stat">Ušetřeno: <strong><span id="saved">0</span> Kč</strong></p>
+    <p class="stat">Zbývá: <strong><span id="remaining"></span> Kč</strong></p>
+    <p class="stat">Počet nevyužitých <span id="unitLabel"></span>: <strong><span id="count">0</span></strong></p>
+    <button onclick="increment()">+1 nevyužité <span id="unitLabelBtn"></span></button>
+    <p id="message" style="margin-top:15px; font-weight: bold;"></p>
+  </div>
+
+  <script>
+    let goal = 0, unit = 0, saved = 0, count = 0;
+    let unitName = '', goalName = '';
+
+    function startTracker() {
+      goalName = document.getElementById("goalItem").value;
+      goal = parseFloat(document.getElementById("goalAmount").value);
+      unitName = document.getElementById("unitName").value;
+      unit = parseFloat(document.getElementById("unitValue").value);
+
+      if (!goalName || isNaN(goal) || !unitName || isNaN(unit)) {
+        alert("Prosím vyplň všechna pole správně.");
+        return;
+      }
+
+      saved = 0;
+      count = 0;
+
+      updateUI();
+      saveToLocal();
+    }
+
+    function increment() {
+      saved += unit;
+      count += 1;
+      updateUI();
+      saveToLocal();
+
+      if (saved >= goal) {
+        document.getElementById("message").textContent = "🎉 Cíl splněn! Můžeš si to koupit!";
+      }
+    }
+
+    function updateUI() {
+      document.getElementById("goalText").textContent = `${goalName} za ${goal} Kč`;
+      document.getElementById("unitLabel").textContent = unitName;
+      document.getElementById("unitLabelBtn").textContent = unitName;
+      document.getElementById("saved").textContent = saved.toFixed(0);
+      document.getElementById("remaining").textContent = Math.max(0, (goal - saved).toFixed(0));
+      document.getElementById("count").textContent = count;
+      document.getElementById("message").textContent = "";
+      document.getElementById("tracker").style.display = "block";
+    }
+
+    function saveToLocal() {
+      const data = {
+        goalName, goal, unitName, unit, saved, count
+      };
+      localStorage.setItem("savingsTracker", JSON.stringify(data));
+    }
+
+    function loadFromLocal() {
+      const data = JSON.parse(localStorage.getItem("savingsTracker"));
+      if (data) {
+        goalName = data.goalName;
+        goal = data.goal;
+        unitName = data.unitName;
+        unit = data.unit;
+        saved = data.saved;
+        count = data.count;
+        updateUI();
+      }
+    }
+
+    window.onload = loadFromLocal;
+  </script>
+
+</body>
+</html>
